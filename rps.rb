@@ -22,15 +22,16 @@ module RockPaperScissors
          
          computer_throw = @throws.sample
          player_throw = req.GET["choise"]
-         answer = if !@throws.include?(player_throw)
-            "Choose an option for start:"
-         elsif player_throw == computer_throw
-            "There is a tie"
-         elsif player_throw == defeat[computer_throw]
-            "Computer wins. #{computer_throw} defeats #{player_throw}"
-         else
-            "Well done, you win. #{player_throw} beats #{computer_throw}"
-         end
+         answer = 
+            if !@throws.include?(player_throw)
+               "Choose an option for start:"
+            elsif player_throw == computer_throw
+               "There is a tie"
+            elsif player_throw == defeat[computer_throw]
+               "Computer wins. #{computer_throw} defeats #{player_throw}"
+            else
+               "Well done, you win. #{player_throw} beats #{computer_throw}"
+            end
 
          
          engine = Haml::Engine.new File.open("views/index.haml").read
@@ -38,7 +39,9 @@ module RockPaperScissors
          res.write engine.render({},
             :answer => answer,
             :choose => @choose,
-            :throws => @throws)
+            :throws => @throws
+            :computer_throw => computer_throw
+            :player_throw => player_throw)                                )
          res.finish
       end # call
    end # App
