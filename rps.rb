@@ -18,7 +18,20 @@ module RockPaperScissors
          req = Request.new(env)
          
          req.env.keys.sort.each { |x| puts "{x} => #{req.env[x]}" }
-         # ...
+  
+         
+         computer_throw = @throws.sample
+         player_throw = req.GET["choise"]
+         answer = if !@throws.include?(player_throw)
+            "Choose an option for start:"
+         elsif player_throw == computer_throw
+            "There is a tie"
+         elsif player_throw == defeat[computer_throw]
+            "Computer wins. #{computer_throw} defeats #{player_throw}"
+         else
+            "Well done, you win. #{player_throw} beats #{computer_throw}"
+         end
+
          
          engine = Haml::Engine.new File.open("views/index.haml").read
          res = Rack::Response.new
@@ -30,6 +43,7 @@ module RockPaperScissors
       end # call
    end # App
 end # RockPaperScissors
+
 
 
 if $0 == __FILE__
