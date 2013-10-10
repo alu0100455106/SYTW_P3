@@ -1,8 +1,7 @@
 require 'rack/request'
 require 'rack/response'
 require 'haml'
-require 'rack'
-require 'thin'
+
 
 module RockPaperScissors
 
@@ -12,25 +11,26 @@ module RockPaperScissors
          @app = app
          @content_type = :html
          @defeat = {'rock' => 'scissors', 'paper' => 'rock', 'scissors' => 'paper'}
+         @throws = @defeat.keys
       end
       
       def call(env)
-         req = Request.new(env)
+         req = Rack::Request.new(env)
          
          req.env.keys.sort.each { |x| puts "{x} => #{req.env[x]}" }
   
          
          computer_throw = @throws.sample
-         player_throw = req.GET["choise"]
+         player_throw = req.GET["choice"]
          answer = 
             if !@throws.include?(player_throw)
-               "Choose an option for start:"
+               "Choose one"
             elsif player_throw == computer_throw
                "There is a tie"
-            elsif player_throw == defeat[computer_throw]
-               "Computer wins. #{computer_throw} defeats #{player_throw}"
+            elsif computer_throw == @defeat[player_throw]
+               "Well done. You win; #{player_throw} beats #{computer_throw}"               
             else
-               "Well done, you win. #{player_throw} beats #{computer_throw}"
+               "Computer wins; #{computer_throw} defeats #{player_throw}"
             end
 
          
@@ -38,11 +38,11 @@ module RockPaperScissors
          res = Rack::Response.new
          res.write engine.render({},
             :answer => answer,
-            :choose => @choose,
-            :throws => @throws
-            :computer_throw => computer_throw
-            :player_throw => player_throw)                                )
+            :throws => @throws,
+            :computer_throw => computer_throw,
+            :player_throw => player_throw)         
          res.finish
+         
       end # call
    end # App
 end # RockPaperScissors
@@ -53,7 +53,8 @@ if $0 == __FILE__
    require 'rack'
    require 'rack/showexceptions'
    Rack::Server.start(
-      :app => Rack::ShowExceptions.new(
+      #:app => RockPaperScissors::App.new,
+     :app => Rack::ShowExceptions.new(
                Rack::Lint.new(
                   RockPaperScissors::App.new)
                ),
