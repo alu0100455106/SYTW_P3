@@ -36,11 +36,11 @@ module RockPaperScissors
          
          engine = Haml::Engine.new File.open("views/index.haml").read
          res = Rack::Response.new
+         
+         #Añadimos la info al template
          res.write engine.render({},
-            :answer => answer,
-            :throws => @throws,
-            :computer_throw => computer_throw,
-            :player_throw => player_throw)         
+            :answer => answer)
+            #:throws => @throws)        
          res.finish
          
       end # call
