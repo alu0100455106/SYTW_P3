@@ -1,4 +1,4 @@
-desc "Ejecutando"
+desc "Arrancando el servidor"
 
 task :default do
    sh "ruby rps.rb"
